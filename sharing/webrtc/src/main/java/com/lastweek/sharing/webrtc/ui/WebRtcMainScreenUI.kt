@@ -1,0 +1,139 @@
+package com.lastweek.sharing.webrtc.ui
+
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.dropUnlessStarted
+import com.lastweek.sharing.common.ui.DoubleClickProtection
+import com.lastweek.sharing.common.ui.MediaProjectionPermission
+import com.lastweek.sharing.common.ui.get
+import com.lastweek.sharing.webrtc.R
+import com.lastweek.sharing.webrtc.internal.WebRtcEvent
+import com.lastweek.sharing.webrtc.internal.WebRtcStreamingService
+import com.lastweek.sharing.webrtc.ui.main.AudioCard
+import com.lastweek.sharing.webrtc.ui.main.ClientsCard
+import com.lastweek.sharing.webrtc.ui.main.ErrorCard
+import com.lastweek.sharing.webrtc.ui.main.OtherParametersCard
+import com.lastweek.sharing.webrtc.ui.main.StreamCard
+import kotlinx.coroutines.flow.StateFlow
+
+@Composable
+internal fun WebRtcMainScreenUI(
+    webRtcStateFlow: StateFlow<WebRtcState>,
+    sendEvent: (event: WebRtcEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val webRtcState = webRtcStateFlow.collectAsStateWithLifecycle()
+
+    BoxWithConstraints(modifier = modifier) {
+        MediaProjectionPermission(
+            shouldRequestPermission = webRtcState.value.waitingCastPermission,
+            onPermissionGranted = { intent -> if (webRtcState.value.waitingCastPermission) sendEvent(WebRtcEvent.StartProjection(intent)) },
+            onPermissionDenied = { if (webRtcState.value.waitingCastPermission) sendEvent(WebRtcEvent.CastPermissionsDenied) },
+            requiredDialogTitle = stringResource(id = R.string.webrtc_stream_cast_permission_required_title),
+            requiredDialogText = stringResource(id = R.string.webrtc_stream_cast_permission_required)
+        )
+
+        val lazyVerticalStaggeredGridState = rememberLazyStaggeredGridState()
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(if (this.maxWidth >= 800.dp) 2 else 1),
+            modifier = Modifier.fillMaxSize(),
+            state = lazyVerticalStaggeredGridState,
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 64.dp),
+        ) {
+            webRtcState.value.error?.let {
+                item(key = "ERROR") {
+                    ErrorCard(error = it, modifier = Modifier.padding(8.dp), sendEvent = sendEvent)
+                }
+            }
+
+            item(key = "STREAM") {
+                StreamCard(
+                    webRtcState = webRtcState,
+                    onGetNewStreamId = { sendEvent(WebRtcEvent.GetNewStreamId) }, //TODO notify user that this will disconnect all clients
+                    onCreateNewPassword = { sendEvent(WebRtcEvent.CreateNewPassword) }, //TODO notify user that this will disconnect all clients
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+
+//            item(key = "AUDIO") {
+//                AudioCard(
+//                    webRtcState = webRtcState,
+//                    modifier = Modifier.padding(8.dp)
+//                )
+//            }
+//
+//            item(key = "OTHER_PARAMETERS") {
+//                OtherParametersCard(modifier = Modifier.padding(8.dp))
+//            }
+//
+//            item(key = "CLIENTS") {
+//                ClientsCard(
+//                    webRtcState = webRtcState,
+//                    onClientDisconnect = { clientId -> sendEvent(WebRtcEvent.RemoveClient(clientId, true, "User request")) },
+//                    modifier = Modifier.padding(8.dp)
+//                )
+//            }
+        }
+
+        LaunchedEffect(webRtcState.value.error) {
+            if (webRtcState.value.error != null) lazyVerticalStaggeredGridState.animateScrollToItem(0)
+        }
+
+        val doubleClickProtection = remember { DoubleClickProtection.get() }
+
+        Button(
+            onClick = dropUnlessStarted {
+                doubleClickProtection.processClick {
+                    if (webRtcState.value.isStreaming) sendEvent(WebRtcEvent.Intentable.StopStream("User action: Button"))
+                    else sendEvent(WebRtcStreamingService.InternalEvent.StartStream)
+                }
+            },
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                .align(alignment = Alignment.BottomCenter),
+            enabled = webRtcState.value.isBusy.not(),
+            shape = MaterialTheme.shapes.medium,
+            contentPadding = PaddingValues(start = 12.dp, top = 12.dp, bottom = 12.dp, end = 16.dp),
+            elevation = ButtonDefaults.buttonElevation(
+                defaultElevation = 3.0.dp,
+                pressedElevation = 3.0.dp,
+                focusedElevation = 3.0.dp,
+                hoveredElevation = 6.0.dp,
+            )
+        ) {
+            Crossfade(targetState = webRtcState.value.isStreaming, label = "StreamingButtonCrossfade") { isStreaming ->
+                Icon(
+                    painter = if (isStreaming) painterResource(R.drawable.stop_24px) else painterResource(R.drawable.play_arrow_24px),
+                    contentDescription = null
+                )
+            }
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(
+                text = stringResource(id = if (webRtcState.value.isStreaming) R.string.webrtc_stream_stop else R.string.webrtc_stream_start),
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+    }
+}
