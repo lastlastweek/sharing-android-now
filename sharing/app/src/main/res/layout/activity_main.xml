@@ -51,6 +51,10 @@
                         android:layout_weight="1"
                         android:nextFocusRight="@+id/fab"
                         android:scrollbars="vertical" />
+                    <androidx.compose.ui.platform.ComposeView
+                        android:id="@+id/compose_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <LinearLayout
                         android:id="@+id/layout_test"
                         android:layout_width="match_parent"
