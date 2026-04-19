@@ -15,13 +15,12 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
@@ -37,7 +36,6 @@ import com.lastweek.sharing.AppConfig.VPN
 import com.lastweek.sharing.R
 import com.lastweek.sharing.common.module.StreamingModule
 import com.lastweek.sharing.common.module.StreamingModuleManager
-import com.lastweek.sharing.common.settings.AppSettings
 import com.lastweek.sharing.databinding.ActivityMainBinding
 import com.lastweek.sharing.dto.EConfigType
 import com.lastweek.sharing.extension.toast
@@ -182,6 +180,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mItemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(adapter))
         mItemTouchHelper?.attachToRecyclerView(binding.recyclerView)
 
+        binding.composeView.apply {
+            // Dispose of the Composition when the view's LifecycleOwner
+            // is destroyed
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                ScreenStreamContent()
+            }
+        }
+
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
         )
@@ -212,9 +219,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         })
 
-        setContent {
-            ScreenStreamContent()
-        }
         streamingModulesManager.selectedModuleIdFlow
             .onStart {}
             .onEach { moduleId ->
