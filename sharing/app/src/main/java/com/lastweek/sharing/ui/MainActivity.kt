@@ -15,12 +15,10 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -37,7 +35,6 @@ import com.lastweek.sharing.AppConfig.VPN
 import com.lastweek.sharing.R
 import com.lastweek.sharing.common.module.StreamingModule
 import com.lastweek.sharing.common.module.StreamingModuleManager
-import com.lastweek.sharing.common.settings.AppSettings
 import com.lastweek.sharing.databinding.ActivityMainBinding
 import com.lastweek.sharing.dto.EConfigType
 import com.lastweek.sharing.extension.toast
@@ -47,7 +44,6 @@ import com.lastweek.sharing.handler.MigrateManager
 import com.lastweek.sharing.handler.MmkvManager
 import com.lastweek.sharing.helper.SimpleItemTouchHelperCallback
 import com.lastweek.sharing.service.V2RayServiceManager
-import com.lastweek.sharing.temporary.ScreenStreamContent
 import com.lastweek.sharing.util.Utils
 import com.lastweek.sharing.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +61,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-
 
     private val adapter by lazy { MainRecyclerAdapter(this) }
     private val requestVpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -212,9 +207,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         })
 
-        setContent {
-            ScreenStreamContent()
-        }
         streamingModulesManager.selectedModuleIdFlow
             .onStart {}
             .onEach { moduleId ->
