@@ -5,21 +5,17 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.net.Uri
-import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
-import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -32,7 +28,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.lastweek.sharing.AppConfig
-import com.lastweek.sharing.AppConfig.VPN
 import com.lastweek.sharing.R
 import com.lastweek.sharing.common.module.StreamingModule
 import com.lastweek.sharing.common.module.StreamingModuleManager
@@ -46,6 +41,7 @@ import com.lastweek.sharing.handler.MmkvManager
 import com.lastweek.sharing.helper.SimpleItemTouchHelperCallback
 import com.lastweek.sharing.service.V2RayServiceManager
 import com.lastweek.sharing.temporary.ScreenStreamContent
+import com.lastweek.sharing.temporary.ScreenStreamTheme
 import com.lastweek.sharing.util.Utils
 import com.lastweek.sharing.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -59,11 +55,9 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
     private val streamingModulesManager: StreamingModuleManager by inject(mode = LazyThreadSafetyMode.NONE)
-
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-
 
     private val adapter by lazy { MainRecyclerAdapter(this) }
     private val requestVpnPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -144,29 +138,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         title = getString(R.string.title_server)
         setSupportActionBar(binding.toolbar)
 
-        binding.fab.setOnClickListener {
-            if (mainViewModel.isRunning.value == true) {
-                V2RayServiceManager.stopVService(this)
-            } else if ((MmkvManager.decodeSettingsString(AppConfig.PREF_MODE) ?: VPN) == VPN) {
-                val intent = VpnService.prepare(this)
-                if (intent == null) {
-                    startV2Ray()
-                } else {
-                    requestVpnPermission.launch(intent)
-                }
-            } else {
-                startV2Ray()
-            }
-        }
-
-        binding.layoutTest.setOnClickListener {
-            if (mainViewModel.isRunning.value == true) {
-                setTestState(getString(R.string.connection_test_testing))
-                mainViewModel.testCurrentServerRealPing()
-            } else {
-//                tv_test_state.text = getString(R.string.connection_test_fail)
-            }
-        }
+//        binding.fab.setOnClickListener {
+//            if (mainViewModel.isRunning.value == true) {
+//                V2RayServiceManager.stopVService(this)
+//            } else if ((MmkvManager.decodeSettingsString(AppConfig.PREF_MODE) ?: VPN) == VPN) {
+//                val intent = VpnService.prepare(this)
+//                if (intent == null) {
+//                    startV2Ray()
+//                } else {
+//                    requestVpnPermission.launch(intent)
+//                }
+//            } else {
+//                startV2Ray()
+//            }
+//        }
+//        binding.layoutTest.setOnClickListener {
+//            if (mainViewModel.isRunning.value == true) {
+//                setTestState(getString(R.string.connection_test_testing))
+//                mainViewModel.testCurrentServerRealPing()
+//            } else {
+////                tv_test_state.text = getString(R.string.connection_test_fail)
+//            }
+//        }
 
         binding.recyclerView.setHasFixedSize(true)
         if (MmkvManager.decodeSettingsBool(AppConfig.PREF_DOUBLE_COLUMN_DISPLAY, false)) {
@@ -179,15 +172,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         mItemTouchHelper = ItemTouchHelper(SimpleItemTouchHelperCallback(adapter))
         mItemTouchHelper?.attachToRecyclerView(binding.recyclerView)
-
-        binding.composeView.apply {
-            // Dispose of the Composition when the view's LifecycleOwner
-            // is destroyed
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                ScreenStreamContent()
-            }
-        }
 
         val toggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -219,6 +203,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         })
 
+        binding.composeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                ScreenStreamTheme {
+                    ScreenStreamContent()
+                }
+            }
+        }
         streamingModulesManager.selectedModuleIdFlow
             .onStart {}
             .onEach { moduleId ->
@@ -238,21 +230,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 adapter.notifyDataSetChanged()
             }
         }
-        mainViewModel.updateTestResultAction.observe(this) { setTestState(it) }
-        mainViewModel.isRunning.observe(this) { isRunning ->
-            adapter.isRunning = isRunning
-            if (isRunning) {
-                binding.fab.setImageResource(R.drawable.ic_stop_24dp)
-                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_active))
-                setTestState(getString(R.string.connection_connected))
-                binding.layoutTest.isFocusable = true
-            } else {
-                binding.fab.setImageResource(R.drawable.ic_play_24dp)
-                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_inactive))
-                setTestState(getString(R.string.connection_not_connected))
-                binding.layoutTest.isFocusable = false
-            }
-        }
+//        mainViewModel.updateTestResultAction.observe(this) { setTestState(it) }
+//        mainViewModel.isRunning.observe(this) { isRunning ->
+//            adapter.isRunning = isRunning
+//            if (isRunning) {
+//                binding.fab.setImageResource(R.drawable.ic_stop_24dp)
+//                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_active))
+//                setTestState(getString(R.string.connection_connected))
+//                binding.layoutTest.isFocusable = true
+//            } else {
+//                binding.fab.setImageResource(R.drawable.ic_play_24dp)
+//                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_inactive))
+//                setTestState(getString(R.string.connection_not_connected))
+//                binding.layoutTest.isFocusable = false
+//            }
+//        }
         mainViewModel.startListenBroadcast()
         mainViewModel.initAssets(assets)
     }
@@ -265,9 +257,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     toast(getString(R.string.migration_success))
                     mainViewModel.reloadServerList()
                 } else {
-                    // toast(getString(R.string.migration_fail))
+                    //toast(getString(R.string.migration_fail))
                 }
             }
+
         }
     }
 
@@ -321,28 +314,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onPause()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-
-        val searchItem = menu.findItem(R.id.search_view)
-        if (searchItem != null) {
-            val searchView = searchItem.actionView as SearchView
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean = false
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    mainViewModel.filterConfig(newText.orEmpty())
-                    return false
-                }
-            })
-
-            searchView.setOnCloseListener {
-                mainViewModel.filterConfig("")
-                false
-            }
-        }
-        return super.onCreateOptionsMenu(menu)
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        menuInflater.inflate(R.menu.menu_main, menu)
+//
+//        val searchItem = menu.findItem(R.id.search_view)
+//        if (searchItem != null) {
+//            val searchView = searchItem.actionView as SearchView
+//            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//                override fun onQueryTextSubmit(query: String?): Boolean = false
+//
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    mainViewModel.filterConfig(newText.orEmpty())
+//                    return false
+//                }
+//            })
+//
+//            searchView.setOnCloseListener {
+//                mainViewModel.filterConfig("")
+//                false
+//            }
+//        }
+//        return super.onCreateOptionsMenu(menu)
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.import_qrcode -> {
@@ -400,6 +393,23 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             true
         }
 
+        R.id.export_all -> {
+            exportAll()
+            true
+        }
+
+        R.id.ping_all -> {
+            toast(getString(R.string.connection_test_testing_count, mainViewModel.serversCache.count()))
+            mainViewModel.testAllTcping()
+            true
+        }
+
+        R.id.real_ping_all -> {
+            toast(getString(R.string.connection_test_testing_count, mainViewModel.serversCache.count()))
+            mainViewModel.testAllRealPing()
+            true
+        }
+
         R.id.service_restart -> {
             restartV2Ray()
             true
@@ -420,23 +430,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             true
         }
 
-        R.id.export_all -> {
-            exportAll()
-            true
-        }
-
-        R.id.ping_all -> {
-            toast(getString(R.string.connection_test_testing_count, mainViewModel.serversCache.count()))
-            mainViewModel.testAllTcping()
-            true
-        }
-
-        R.id.real_ping_all -> {
-            toast(getString(R.string.connection_test_testing_count, mainViewModel.serversCache.count()))
-            mainViewModel.testAllRealPing()
-            true
-        }
-
         R.id.sort_by_test_results -> {
             sortByTestResults()
             true
@@ -446,6 +439,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             importConfigViaSub()
             true
         }
+
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -528,6 +522,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         return true
     }
+
 
     /**
      * import config from sub
@@ -678,9 +673,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    private fun setTestState(content: String?) {
-        binding.tvTestState.text = content
-    }
+//    private fun setTestState(content: String?) {
+//        binding.tvTestState.text = content
+//    }
+
+//    val mConnection = object : ServiceConnection {
+//        override fun onServiceDisconnected(name: ComponentName?) {
+//        }
+//
+//        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+//            sendMsg(AppConfig.MSG_REGISTER_CLIENT, "")
+//        }
+//    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_BUTTON_B) {
@@ -690,18 +694,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return super.onKeyDown(keyCode, event)
     }
 
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.sub_setting -> requestSubSettingActivity.launch(Intent(this, SubSettingActivity::class.java))
+//            R.id.sub_setting -> requestSubSettingActivity.launch(Intent(this, SubSettingActivity::class.java))
             R.id.per_app_proxy_settings -> startActivity(Intent(this, PerAppProxyActivity::class.java))
             R.id.routing_setting -> requestSubSettingActivity.launch(Intent(this, RoutingSettingActivity::class.java))
             R.id.user_asset_setting -> startActivity(Intent(this, UserAssetActivity::class.java))
-            R.id.settings -> startActivity(
-                Intent(this, SettingsActivity::class.java)
-                    .putExtra("isRunning", mainViewModel.isRunning.value == true)
-            )
-            R.id.promotion -> Utils.openUri(this, "${Utils.decode(AppConfig.APP_PROMOTION_URL)}?t=${System.currentTimeMillis()}")
+//            R.id.settings -> startActivity(
+//                Intent(this, SettingsActivity::class.java)
+//                    .putExtra("isRunning", mainViewModel.isRunning.value == true)
+//            )
+
+//            R.id.promotion -> Utils.openUri(this, "${Utils.decode(AppConfig.APP_PROMOTION_URL)}?t=${System.currentTimeMillis()}")
             R.id.logcat -> startActivity(Intent(this, LogcatActivity::class.java))
             R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
         }
@@ -720,3 +726,4 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 }
+

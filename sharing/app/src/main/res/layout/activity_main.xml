@@ -10,25 +10,32 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:orientation="vertical">
+
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"/>
+                android:layout_height="?attr/actionBarSize" />
+
         </com.google.android.material.appbar.AppBarLayout>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/main_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/pb_waiting"
                         android:layout_width="match_parent"
@@ -36,6 +43,7 @@
                         android:indeterminate="true"
                         android:visibility="invisible"
                         app:indicatorColor="@color/color_fab_active" />
+
                     <com.google.android.material.tabs.TabLayout
                         android:id="@+id/tab_group"
                         android:layout_width="match_parent"
@@ -44,6 +52,7 @@
                         app:tabIndicatorFullWidth="false"
                         app:tabMode="scrollable"
                         app:tabTextAppearance="@style/TabLayoutTextStyle" />
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view"
                         android:layout_width="match_parent"
@@ -55,48 +64,55 @@
                         android:id="@+id/compose_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                    <LinearLayout
-                        android:id="@+id/layout_test"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/view_height_dp64"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:nextFocusLeft="@+id/recycler_view"
-                        android:nextFocusRight="@+id/fab"
-                        android:orientation="vertical">
-                        <View
-                            android:layout_width="wrap_content"
-                            android:layout_height="1dp"
-                            android:background="@color/divider_color_light" />
-                        <TextView
-                            android:id="@+id/tv_test_state"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="start|center"
-                            android:maxLines="2"
-                            android:minLines="1"
-                            android:paddingStart="@dimen/padding_spacing_dp16"
-                            android:text="@string/connection_test_pending"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
-                    </LinearLayout>
+
+<!--                    <LinearLayout-->
+<!--                        android:id="@+id/layout_test"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="@dimen/view_height_dp64"-->
+<!--                        android:clickable="true"-->
+<!--                        android:focusable="true"-->
+<!--                        android:nextFocusLeft="@+id/recycler_view"-->
+<!--                        android:nextFocusRight="@+id/fab"-->
+<!--                        android:orientation="vertical">-->
+
+<!--                        <View-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="1dp"-->
+<!--                            android:background="@color/divider_color_light" />-->
+
+<!--                        <TextView-->
+<!--                            android:id="@+id/tv_test_state"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:gravity="start|center"-->
+<!--                            android:maxLines="2"-->
+<!--                            android:minLines="1"-->
+<!--                            android:paddingStart="@dimen/padding_spacing_dp16"-->
+<!--                            android:text="@string/connection_test_pending"-->
+<!--                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />-->
+
+<!--                    </LinearLayout>-->
                 </LinearLayout>
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:layout_marginEnd="@dimen/padding_spacing_dp16">
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                        android:id="@+id/fab"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:layout_marginBottom="@dimen/view_height_dp36"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:nextFocusLeft="@+id/layout_test"
-                        android:src="@drawable/ic_play_24dp"
-                        app:layout_anchorGravity="bottom|right|end" />
-                </FrameLayout>
+
+<!--                <FrameLayout-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_gravity="bottom|end"-->
+<!--                    android:layout_marginEnd="@dimen/padding_spacing_dp16">-->
+
+<!--                    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--                        android:id="@+id/fab"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="bottom|end"-->
+<!--                        android:layout_marginBottom="@dimen/view_height_dp36"-->
+<!--                        android:clickable="true"-->
+<!--                        android:focusable="true"-->
+<!--                        android:nextFocusLeft="@+id/layout_test"-->
+<!--                        android:src="@drawable/ic_play_24dp"-->
+<!--                        app:layout_anchorGravity="bottom|right|end" />-->
+
+<!--                </FrameLayout>-->
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </RelativeLayout>
     </LinearLayout>
@@ -111,4 +127,3 @@
         app:menu="@menu/menu_drawer">
     </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>
-

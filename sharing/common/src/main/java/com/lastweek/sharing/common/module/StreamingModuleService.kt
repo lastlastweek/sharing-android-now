@@ -22,7 +22,7 @@ public abstract class StreamingModuleService : Service() {
     protected val processedIntents: MutableSet<String> = mutableSetOf()
 
     protected companion object {
-        public const val INTENT_ID: String = "info.dvkr.screenstream.intent.ID"
+        public const val INTENT_ID: String = "com.lastweek.sharing.intent.ID"
 
         public fun Intent.addIntentId(): Intent = putExtra(INTENT_ID, UUID.randomUUID().toString())
     }

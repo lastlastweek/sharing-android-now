@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.currentWindowSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ internal fun ScreenStreamContent(
             MainContent(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.safeDrawing)
                     .weight(1F)
             )
         }
@@ -47,5 +49,9 @@ private fun MainContent(
 ) {
     val windowSize = currentWindowSize()
     val contentBoundsInWindow = remember(windowSize) { mutableStateOf(windowSize.toIntRect().toRect()) }
-    StreamTabContent(contentBoundsInWindow.value, modifier = Modifier.fillMaxSize())
+    Surface(
+        modifier = modifier,
+    ) {
+        StreamTabContent(contentBoundsInWindow.value, modifier = Modifier.fillMaxSize())
+    }
 }

@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.jaredsburrows.license")
 }
 
 kotlin {
@@ -141,7 +140,6 @@ android {
 dependencies {
     implementation(projects.common)
     implementation(projects.webrtc)
-    implementation(projects.mjpeg)
 
     // Core Libraries
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))

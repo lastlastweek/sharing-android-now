@@ -33,4 +33,3 @@ rootProject.name = "Sharing"
 include(":app")
 include(":common")
 include(":webrtc")
-include(":mjpeg")

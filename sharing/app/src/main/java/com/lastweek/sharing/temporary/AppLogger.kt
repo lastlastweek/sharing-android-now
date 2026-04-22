@@ -46,7 +46,7 @@ internal object AppLogger {
     @MainThread
     internal fun init(context: Context, configureLogger: (LogConfiguration.Builder) -> Unit) {
         val dpContext = context.deviceProtectedContext()
-        sharedPreferences = dpContext.getSharedPreferences("info.dvkr.screenstream_logging", Application.MODE_PRIVATE)
+        sharedPreferences = dpContext.getSharedPreferences("com.lastweek.sharing_logging", Application.MODE_PRIVATE)
         isLoggingOn = sharedPreferences.getBoolean("loggingOn", false)
 
         val logConfiguration = LogConfiguration.Builder()

@@ -39,8 +39,8 @@
     <string name="webrtc_stream_no_web_browser_found">未找到网络浏览器</string>
     <string name="webrtc_stream_external_app_error">外部程序错误</string>
     <string name="webrtc_stream_share_address">分享设备地址</string>
-    <string name="webrtc_stream_start">开始流</string>
-    <string name="webrtc_stream_stop">停止流</string>
+    <string name="webrtc_stream_start">开始</string>
+    <string name="webrtc_stream_stop">停止</string>
 
     <string name="webrtc_stream_other_parameters">其他参数</string>
     <string name="webrtc_stream_keep_awake">保持设备唤醒状态</string>

@@ -40,8 +40,8 @@ internal class NotificationHelperImpl(context: Context) : NotificationHelper {
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.deleteNotificationChannel("info.dvkr.screenstream.service.NOTIFICATION_CHANNEL_01")
-            notificationManager.deleteNotificationChannel("info.dvkr.screenstream.NOTIFICATION_CHANNEL_START_STOP")
+            notificationManager.deleteNotificationChannel("com.lastweek.sharing.service.NOTIFICATION_CHANNEL_01")
+            notificationManager.deleteNotificationChannel("com.lastweek.sharing.NOTIFICATION_CHANNEL_START_STOP")
 
             val streamingName = context.getString(R.string.app_notification_channel_streaming_T)
             NotificationChannel(CHANNEL_STREAMING, streamingName, NotificationManager.IMPORTANCE_DEFAULT).apply {
