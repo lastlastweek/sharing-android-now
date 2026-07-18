@@ -6,6 +6,7 @@ import android.app.ActivityManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -28,10 +29,13 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.lastweek.sharing.AppConfig
+import com.lastweek.sharing.AppConfig.VPN
 import com.lastweek.sharing.R
 import com.lastweek.sharing.common.module.StreamingModule
 import com.lastweek.sharing.common.module.StreamingModuleManager
+import com.lastweek.sharing.screens.AvatarScreen
 import com.lastweek.sharing.databinding.ActivityMainBinding
+import com.lastweek.sharing.databinding.NavHeaderBinding
 import com.lastweek.sharing.dto.EConfigType
 import com.lastweek.sharing.extension.toast
 import com.lastweek.sharing.extension.toastError
@@ -65,9 +69,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             startV2Ray()
         }
     }
+
     private val requestSubSettingActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         initGroupTab()
     }
+
     private val tabGroupListener = object : TabLayout.OnTabSelectedListener {
         override fun onTabSelected(tab: TabLayout.Tab?) {
             val selectId = tab?.tag.toString()
@@ -152,14 +158,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 //                startV2Ray()
 //            }
 //        }
-//        binding.layoutTest.setOnClickListener {
-//            if (mainViewModel.isRunning.value == true) {
-//                setTestState(getString(R.string.connection_test_testing))
-//                mainViewModel.testCurrentServerRealPing()
-//            } else {
-////                tv_test_state.text = getString(R.string.connection_test_fail)
-//            }
-//        }
+
+        binding.layoutTest.setOnClickListener {
+            if (mainViewModel.isRunning.value == true) {
+                setTestState(getString(R.string.connection_test_testing))
+                mainViewModel.testCurrentServerRealPing()
+            } else {
+//                tv_test_state.text = getString(R.string.connection_test_fail)
+            }
+        }
 
         binding.recyclerView.setHasFixedSize(true)
         if (MmkvManager.decodeSettingsBool(AppConfig.PREF_DOUBLE_COLUMN_DISPLAY, false)) {
@@ -230,21 +237,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 adapter.notifyDataSetChanged()
             }
         }
-//        mainViewModel.updateTestResultAction.observe(this) { setTestState(it) }
-//        mainViewModel.isRunning.observe(this) { isRunning ->
-//            adapter.isRunning = isRunning
-//            if (isRunning) {
-//                binding.fab.setImageResource(R.drawable.ic_stop_24dp)
-//                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_active))
-//                setTestState(getString(R.string.connection_connected))
-//                binding.layoutTest.isFocusable = true
-//            } else {
-//                binding.fab.setImageResource(R.drawable.ic_play_24dp)
-//                binding.fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.color_fab_inactive))
-//                setTestState(getString(R.string.connection_not_connected))
-//                binding.layoutTest.isFocusable = false
-//            }
-//        }
         mainViewModel.startListenBroadcast()
         mainViewModel.initAssets(assets)
     }
@@ -261,6 +253,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             }
 
+        }
+
+        val navigationView = binding.navView
+        val headerView = navigationView.getHeaderView(0)
+        val headerBinding = NavHeaderBinding.bind(headerView)
+        headerBinding.composeHeaderContainer.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AvatarScreen { account, password ->
+//                    Toast.makeText(
+//                        this@MainActivity,
+//                        "账号：$account\n密码：$password",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+                }
+            }
         }
     }
 
@@ -313,29 +321,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     public override fun onPause() {
         super.onPause()
     }
-
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//
-//        val searchItem = menu.findItem(R.id.search_view)
-//        if (searchItem != null) {
-//            val searchView = searchItem.actionView as SearchView
-//            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//                override fun onQueryTextSubmit(query: String?): Boolean = false
-//
-//                override fun onQueryTextChange(newText: String?): Boolean {
-//                    mainViewModel.filterConfig(newText.orEmpty())
-//                    return false
-//                }
-//            })
-//
-//            searchView.setOnCloseListener {
-//                mainViewModel.filterConfig("")
-//                false
-//            }
-//        }
-//        return super.onCreateOptionsMenu(menu)
-//    }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.import_qrcode -> {
@@ -523,7 +508,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-
     /**
      * import config from sub
      */
@@ -673,18 +657,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-//    private fun setTestState(content: String?) {
-//        binding.tvTestState.text = content
-//    }
-
-//    val mConnection = object : ServiceConnection {
-//        override fun onServiceDisconnected(name: ComponentName?) {
-//        }
-//
-//        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-//            sendMsg(AppConfig.MSG_REGISTER_CLIENT, "")
-//        }
-//    }
+    private fun setTestState(content: String?) {
+        binding.tvTestState.text = content
+    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_BUTTON_B) {
@@ -694,25 +669,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return super.onKeyDown(keyCode, event)
     }
 
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
         when (item.itemId) {
-//            R.id.sub_setting -> requestSubSettingActivity.launch(Intent(this, SubSettingActivity::class.java))
+            R.id.account -> startActivity(Intent(this, AccountActivity::class.java))
+
             R.id.per_app_proxy_settings -> startActivity(Intent(this, PerAppProxyActivity::class.java))
             R.id.routing_setting -> requestSubSettingActivity.launch(Intent(this, RoutingSettingActivity::class.java))
             R.id.user_asset_setting -> startActivity(Intent(this, UserAssetActivity::class.java))
-//            R.id.settings -> startActivity(
-//                Intent(this, SettingsActivity::class.java)
-//                    .putExtra("isRunning", mainViewModel.isRunning.value == true)
-//            )
-
-//            R.id.promotion -> Utils.openUri(this, "${Utils.decode(AppConfig.APP_PROMOTION_URL)}?t=${System.currentTimeMillis()}")
             R.id.logcat -> startActivity(Intent(this, LogcatActivity::class.java))
             R.id.about -> startActivity(Intent(this, AboutActivity::class.java))
         }
 
-        binding.drawerLayout.closeDrawer(GravityCompat.START)
+//        binding.drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 

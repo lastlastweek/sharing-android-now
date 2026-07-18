@@ -254,15 +254,15 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
   }
 
   private BitrateAdjuster createBitrateAdjuster(VideoCodecMimeType type, String codecName) {
-    if (codecName.startsWith(EXYNOS_PREFIX)) {
-      if (type == VideoCodecMimeType.VP8) {
-        // Exynos VP8 encoders need dynamic bitrate adjustment.
-        return new DynamicBitrateAdjuster();
-      } else {
-        // Exynos VP9 and H264 encoders need framerate-based bitrate adjustment.
-        return new FramerateBitrateAdjuster();
-      }
-    }
+//    if (codecName.startsWith(EXYNOS_PREFIX)) {
+//      if (type == VideoCodecMimeType.VP8) {
+//        // Exynos VP8 encoders need dynamic bitrate adjustment.
+//        return new DynamicBitrateAdjuster();
+//      } else {
+//        // Exynos VP9 and H264 encoders need framerate-based bitrate adjustment.
+//        return new FramerateBitrateAdjuster();
+//      }
+//    }
     // Other codecs don't need bitrate adjustment.
     return new BaseBitrateAdjuster();
   }

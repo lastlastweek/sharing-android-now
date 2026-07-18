@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.21"
 }
 
 kotlin {
@@ -134,7 +136,6 @@ android {
             useLegacyPackaging = true
         }
     }
-
 }
 
 dependencies {
@@ -153,12 +154,15 @@ dependencies {
     implementation(libs.recyclerview)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.processPhoenix)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.ui)
 
     // UI Libraries
     implementation(libs.material)
     implementation(libs.toasty)
     implementation(libs.editorkit)
     implementation(libs.flexbox)
+    implementation(libs.androidx.compose.material3)
 
     // Data and Storage Libraries
     implementation(libs.mmkv.static)
@@ -187,8 +191,9 @@ dependencies {
 
     // Multidex Support
     implementation(libs.multidex)
-
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.fragment)
     coreLibraryDesugaring(libs.android.tools.desugar)
 
     // Testing Libraries

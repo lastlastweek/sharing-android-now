@@ -18,13 +18,13 @@ import org.webrtc.PeerConnection.IceServer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+
 internal class SocketSignaling(
     private val environment: WebRtcEnvironment,
     private val okHttpClient: OkHttpClient,
     private val eventListener: EventListener,
     private val passwordVerifier: PasswordVerifier
 ) {
-
     internal fun interface PasswordVerifier {
         fun isValid(clientId: ClientId, passwordHash: String): Boolean
     }

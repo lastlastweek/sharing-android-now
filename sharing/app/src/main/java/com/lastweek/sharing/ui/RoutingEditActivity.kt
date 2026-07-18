@@ -84,7 +84,6 @@ class RoutingEditActivity : BaseActivity() {
         return true
     }
 
-
     private fun deleteServer(): Boolean {
         if (position >= 0) {
             AlertDialog.Builder(this).setMessage(R.string.del_config_comfirm)
@@ -111,7 +110,6 @@ class RoutingEditActivity : BaseActivity() {
         if (position < 0) {
             del_config?.isVisible = false
         }
-
         return super.onCreateOptionsMenu(menu)
     }
 

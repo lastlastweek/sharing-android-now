@@ -65,40 +65,40 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
-<!--                    <LinearLayout-->
-<!--                        android:id="@+id/layout_test"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="@dimen/view_height_dp64"-->
-<!--                        android:clickable="true"-->
-<!--                        android:focusable="true"-->
-<!--                        android:nextFocusLeft="@+id/recycler_view"-->
-<!--                        android:nextFocusRight="@+id/fab"-->
-<!--                        android:orientation="vertical">-->
+                    <LinearLayout
+                        android:id="@+id/layout_test"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/view_height_dp64"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:nextFocusLeft="@+id/recycler_view"
+                        android:nextFocusRight="@+id/fab"
+                        android:orientation="vertical">
 
-<!--                        <View-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="1dp"-->
-<!--                            android:background="@color/divider_color_light" />-->
+                        <View
+                            android:layout_width="wrap_content"
+                            android:layout_height="1dp"
+                            android:background="@color/divider_color_light" />
 
-<!--                        <TextView-->
-<!--                            android:id="@+id/tv_test_state"-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="match_parent"-->
-<!--                            android:gravity="start|center"-->
-<!--                            android:maxLines="2"-->
-<!--                            android:minLines="1"-->
-<!--                            android:paddingStart="@dimen/padding_spacing_dp16"-->
-<!--                            android:text="@string/connection_test_pending"-->
-<!--                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />-->
+                        <TextView
+                            android:id="@+id/tv_test_state"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:gravity="start|center"
+                            android:maxLines="2"
+                            android:minLines="1"
+                            android:paddingStart="@dimen/padding_spacing_dp16"
+                            android:text="@string/connection_test_pending"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
-<!--                    </LinearLayout>-->
+                    </LinearLayout>
                 </LinearLayout>
 
-<!--                <FrameLayout-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="bottom|end"-->
-<!--                    android:layout_marginEnd="@dimen/padding_spacing_dp16">-->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="@dimen/padding_spacing_dp16">
 
 <!--                    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
 <!--                        android:id="@+id/fab"-->
@@ -111,11 +111,18 @@
 <!--                        android:nextFocusLeft="@+id/layout_test"-->
 <!--                        android:src="@drawable/ic_play_24dp"-->
 <!--                        app:layout_anchorGravity="bottom|right|end" />-->
-
-<!--                </FrameLayout>-->
+                </FrameLayout>
             </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </RelativeLayout>
     </LinearLayout>
+
+<!--    <androidx.fragment.app.FragmentContainerView-->
+<!--        android:id="@+id/nav_host_container"-->
+<!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:defaultNavHost="true"-->
+<!--        app:navGraph="@navigation/nav_config" />-->
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

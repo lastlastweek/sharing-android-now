@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_config"
+    app:startDestination="@id/login_fragment">
+
+    <fragment
+        android:id="@+id/login_fragment"
+        android:name="com.lastweek.sharing.fragment.LoginFragment">
+
+        <action
+            android:id="@+id/to_register_fragment"
+            app:destination="@+id/register_fragment" />
+
+        <action
+            android:id="@+id/to_forget_fragment"
+            app:destination="@+id/forget_fragment" />
+
+        <action
+            android:id="@+id/to_agreement_activity"
+            app:destination="@+id/agreement_activity" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/register_fragment"
+        android:name="com.lastweek.sharing.fragment.RegisterFragment" />
+
+    <fragment
+        android:id="@+id/forget_fragment"
+        android:name="com.lastweek.sharing.fragment.ForgetFragment" />
+</navigation>

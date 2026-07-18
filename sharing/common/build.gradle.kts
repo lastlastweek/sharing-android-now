@@ -48,6 +48,11 @@ dependencies {
     api(libs.koin.android.compose)
     api(libs.xlog)
 
+    api(libs.kotlinx.serialization.json)
+    api(libs.navigation.compose)
+    api(libs.coil.compose)
+    api(libs.material.icons.extended)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

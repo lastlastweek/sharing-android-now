@@ -337,12 +337,12 @@ object SettingsManager {
             Language.ENGLISH -> Locale.ENGLISH
             Language.CHINA -> Locale.CHINA
             Language.TRADITIONAL_CHINESE -> Locale.TRADITIONAL_CHINESE
-            Language.VIETNAMESE -> Locale("vi")
-            Language.RUSSIAN -> Locale("ru")
-            Language.PERSIAN -> Locale("fa")
-            Language.ARABIC -> Locale("ar")
-            Language.BANGLA -> Locale("bn")
-            Language.BAKHTIARI -> Locale("bqi", "IR")
+            Language.VIETNAMESE -> Locale.forLanguageTag("vi")
+            Language.RUSSIAN -> Locale.forLanguageTag("ru")
+            Language.PERSIAN -> Locale.forLanguageTag("fa")
+            Language.ARABIC -> Locale.forLanguageTag("ar")
+            Language.BANGLA -> Locale.forLanguageTag("bn")
+            Language.BAKHTIARI -> Locale.forLanguageTag("bqi-rIR")
         }
     }
 

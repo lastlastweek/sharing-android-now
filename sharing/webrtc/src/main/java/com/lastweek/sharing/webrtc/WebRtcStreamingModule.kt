@@ -27,7 +27,6 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 public class WebRtcStreamingModule : StreamingModule {
-
     public companion object {
         public val Id: StreamingModule.Id = StreamingModule.Id("WEBRTC")
     }

@@ -89,6 +89,7 @@ internal class WebRtcClient(
             onCandidatePairChanged = { onCandidatePairChanged(epoch) },
             onPeerDisconnected = { onPeerDisconnected(epoch) }
         )
+
         peerConnection = factory.createPeerConnection(rtcConfig, observer)!!.apply {
             addTrack(mediaStream.videoTrack)
             addTrack(mediaStream.audioTrack)
@@ -105,6 +106,11 @@ internal class WebRtcClient(
             }
             // TODO setBitrate(200_000, 2_000_000, 4_000_000)
         }
+
+        // 单独为实例设置码率限制（部分旧版本 WebRTC 支持此 API）
+        // 调整 WebRTC 的码率范围（单位都是 bps）
+        // 设定：最小 500kbps，初始 1500kbps，最大 4M
+        peerConnection?.setBitrate(500 * 1000, 1500 * 1000, 10000 * 1000)
 
         mediaStreamId = mediaStream.id
         synchronized(pendingCandidatesLock) { pendingHostCandidates.clear() }
@@ -508,6 +514,21 @@ internal class WebRtcClient(
     }
 
     override fun hashCode(): Int = clientId.hashCode()
+
+//    private companion object {
+//        @JvmStatic
+//        private val defaultIceServers
+//            get() = sequenceOf(
+//                // STUN 不需要账号密码
+//                IceServer.builder("stun:139.129.24.153:3478").createIceServer(),
+//
+//                // TURN 必须通过 .setUsername() 和 .setPassword() 显式传入
+//                IceServer.builder("turn:139.129.24.153:3478?transport=udp")
+//                    .setUsername("sharing")
+//                    .setPassword("dxxd1734")
+//                    .createIceServer()
+//            ).toList()
+//    }
 
     private companion object {
         @JvmStatic

@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.kotlin.parcelize) apply false
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.firebaseCrashlytics) apply false
+
+    kotlin("plugin.serialization") version "2.2.21"
 }
 
 buildscript {
