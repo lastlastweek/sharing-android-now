@@ -81,7 +81,7 @@ fun LoginScreen(
     var countdown by remember { mutableIntStateOf(0) }
     var isCounting by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-    
+
     val context = LocalContext.current
 
     LaunchedEffect(countdown) {
@@ -208,7 +208,7 @@ fun LoginScreen(
             Button(
                 onClick = {
                     // 登录成功后调用
-                    loginSuccess = true
+                    isLoading = true
                     val intent = Intent(context, MainActivity::class.java).apply {
                         // 3. 核心：清空登录页的任务栈，确保用户进入主页后按返回键不会再看到登录页
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
