@@ -16,7 +16,6 @@ internal class ScreenCapturerAndroid(
     private val mediaProjectionCallback: MediaProjection.Callback,
     private val onCaptureFatal: (Throwable) -> Unit
 ) {
-
     private var mediaProjection: MediaProjection? = null
     private lateinit var capturerObserver: CapturerObserver
     private var virtualDisplay: VirtualDisplay? = null
@@ -58,6 +57,7 @@ internal class ScreenCapturerAndroid(
             surfaceTextureHelper.dispose()
             return false
         }
+
         capturerObserver.onCapturerStarted(true)
         surfaceTextureHelper.startListening { frame -> capturerObserver.onFrameCaptured(frame) }
         return true

@@ -19,7 +19,10 @@ import android.media.MediaCodecInfo;
 import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaFormat;
 import android.opengl.GLES20;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Surface;
 
 import androidx.annotation.Nullable;
@@ -249,9 +252,12 @@ class HardwareVideoEncoder implements VideoEncoder {
       format.setInteger(MediaFormat.KEY_BIT_RATE, adjustedBitrate);
       format.setInteger(MediaFormat.KEY_BITRATE_MODE, BITRATE_MODE_CBR);
       format.setInteger(MediaFormat.KEY_COLOR_FORMAT, colorFormat);
-      format.setFloat(
-          MediaFormat.KEY_FRAME_RATE, (float) bitrateAdjuster.getAdjustedFramerateFps());
-      format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, keyFrameIntervalSec);
+      format.setFloat(MediaFormat.KEY_FRAME_RATE, (float) bitrateAdjuster.getAdjustedFramerateFps());
+
+//      format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
+      format.setInteger(MediaFormat.KEY_INTRA_REFRESH_PERIOD,15);
+//      format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, keyFrameIntervalSec);
+
       if (codecType == VideoCodecMimeType.H264) {
         String profileLevelId = params.get(VideoCodecInfo.H264_FMTP_PROFILE_LEVEL_ID);
         if (profileLevelId == null) {
@@ -292,7 +298,6 @@ class HardwareVideoEncoder implements VideoEncoder {
       }
 
       updateInputFormat(codec.getInputFormat());
-
       codec.start();
     } catch (IllegalArgumentException | IllegalStateException e) {
       Logging.e(TAG, "initEncodeInternal failed", e);

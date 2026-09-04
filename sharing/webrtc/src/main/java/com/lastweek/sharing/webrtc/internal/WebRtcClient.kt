@@ -37,7 +37,6 @@ internal class WebRtcClient(
     private val audioCodecs: List<RtpCapabilities.CodecCapability>,
     private val eventListener: EventListener
 ) {
-
     internal interface EventListener {
         fun onHostOffer(clientId: ClientId, generation: Long, epoch: Long, offer: Offer)
         fun onHostCandidates(clientId: ClientId, generation: Long, epoch: Long, candidates: List<IceCandidate>)
@@ -110,7 +109,7 @@ internal class WebRtcClient(
         // 单独为实例设置码率限制（部分旧版本 WebRTC 支持此 API）
         // 调整 WebRTC 的码率范围（单位都是 bps）
         // 设定：最小 500kbps，初始 1500kbps，最大 4M
-        peerConnection?.setBitrate(500 * 1000, 1500 * 1000, 10000 * 1000)
+//        peerConnection?.setBitrate(500 * 1000, 1500 * 1000, 10000 * 1000)
 
         mediaStreamId = mediaStream.id
         synchronized(pendingCandidatesLock) { pendingHostCandidates.clear() }

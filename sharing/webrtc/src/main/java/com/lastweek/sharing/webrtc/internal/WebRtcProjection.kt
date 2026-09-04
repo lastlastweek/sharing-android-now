@@ -34,7 +34,6 @@ import java.nio.ByteOrder
 import kotlin.math.min
 
 internal class WebRtcProjection(private val serviceContext: Context) : AudioRecordDataCallback {
-
     private companion object {
         @JvmStatic
         private val audioMediaConstraints = MediaConstraints().apply {
@@ -63,8 +62,10 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
     private val lock = Any()
 
     private var mediaProjection: MediaProjection? = null
-    @Volatile private var deviceAudioMute: Boolean = true
-    @Volatile private var deviceAudioRecord: AudioRecord? = null
+    @Volatile
+    private var deviceAudioMute: Boolean = true
+    @Volatile
+    private var deviceAudioRecord: AudioRecord? = null
     private var deviceAudioRecoveryUsed: Boolean = false
     private var reusableDeviceAudioBuffer: ByteBuffer? = null
     private var screenCapturer: ScreenCapturerAndroid? = null
@@ -78,8 +79,9 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
     init {
         XLog.d(getLog("init"))
 
-        val initializationOptions = PeerConnectionFactory.InitializationOptions.builder(serviceContext.applicationContext)
-            .createInitializationOptions()
+        val initializationOptions =
+            PeerConnectionFactory.InitializationOptions.builder(serviceContext.applicationContext)
+                .createInitializationOptions()
 
         PeerConnectionFactory.initialize(initializationOptions)
 
@@ -90,24 +92,39 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
         peerConnectionFactory = PeerConnectionFactory.builder()
             .setOptions(options)
             .setVideoDecoderFactory(DefaultVideoDecoderFactory(rootEglBase.eglBaseContext))
-            .setVideoEncoderFactory(DefaultVideoEncoderFactory(rootEglBase.eglBaseContext, true, false))
+            .setVideoEncoderFactory(
+                DefaultVideoEncoderFactory(
+                    rootEglBase.eglBaseContext,
+                    true,
+                    false
+                )
+            )
             .setAudioDeviceModule(audioDeviceModule)
             .createPeerConnectionFactory()
 
-        val hardwareSupportedCodecs = HardwareVideoEncoderFactory(rootEglBase.eglBaseContext, true, true)
-            .supportedCodecs.map { it.name }
+        val hardwareSupportedCodecs =
+            HardwareVideoEncoderFactory(rootEglBase.eglBaseContext, true, true)
+                .supportedCodecs.map { it.name }
 
-        videoCodecs = peerConnectionFactory.getRtpSenderCapabilities(MediaStreamTrack.MediaType.MEDIA_TYPE_VIDEO)
-            .codecs.filter { it.isSupportedVideo() }.sortedByDescending { it.priority(it.name in hardwareSupportedCodecs) }
+        videoCodecs =
+            peerConnectionFactory.getRtpSenderCapabilities(MediaStreamTrack.MediaType.MEDIA_TYPE_VIDEO)
+                .codecs.filter { it.isSupportedVideo() }
+                .sortedByDescending { it.priority(it.name in hardwareSupportedCodecs) }
 
-        audioCodecs = peerConnectionFactory.getRtpSenderCapabilities(MediaStreamTrack.MediaType.MEDIA_TYPE_AUDIO)
-            .codecs.filter { it.isSupportedAudio() }
+        audioCodecs =
+            peerConnectionFactory.getRtpSenderCapabilities(MediaStreamTrack.MediaType.MEDIA_TYPE_AUDIO)
+                .codecs.filter { it.isSupportedAudio() }
     }
 
-    private fun RtpCapabilities.CodecCapability.isSupportedVideo(): Boolean = VideoCodec.entries.any { it.name == name.uppercase() }
-    private fun RtpCapabilities.CodecCapability.isSupportedAudio(): Boolean = AudioCodec.entries.any { it.name == name.uppercase() }
+    private fun RtpCapabilities.CodecCapability.isSupportedVideo(): Boolean =
+        VideoCodec.entries.any { it.name == name.uppercase() }
+
+    private fun RtpCapabilities.CodecCapability.isSupportedAudio(): Boolean =
+        AudioCodec.entries.any { it.name == name.uppercase() }
+
     private fun RtpCapabilities.CodecCapability.priority(isHardwareSupported: Boolean): Int =
-        VideoCodec.entries.first { it.name == name.uppercase() }.let { if (isHardwareSupported) it.priority + 10 else it.priority }
+        VideoCodec.entries.first { it.name == name.uppercase() }
+            .let { if (isHardwareSupported) it.priority + 10 else it.priority }
 
     internal fun setMicrophoneMute(mute: Boolean) {
         XLog.d(this@WebRtcProjection.getLog("setMicrophoneMute", "$mute"))
@@ -128,13 +145,23 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
      *
      * @param audioFormat format in android.media.AudioFormat
      */
-    override fun onAudioDataRecorded(audioFormat: Int, channelCount: Int, sampleRate: Int, audioBuffer: ByteBuffer) {
+    override fun onAudioDataRecorded(
+        audioFormat: Int,
+        channelCount: Int,
+        sampleRate: Int,
+        audioBuffer: ByteBuffer
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && deviceAudioMute.not()) {
             val projection = synchronized(lock) {
                 if (isStopped || isRunning.not()) return
                 mediaProjection
             } ?: run {
-                XLog.i(getLog("onAudioDataRecorded", "MediaProjection is null. Ignoring device-audio mix."))
+                XLog.i(
+                    getLog(
+                        "onAudioDataRecorded",
+                        "MediaProjection is null. Ignoring device-audio mix."
+                    )
+                )
                 return
             }
 
@@ -163,7 +190,11 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
             val activeRecord = record ?: return
             val deviceAudioBuffer = obtainDeviceAudioBuffer(audioBuffer.capacity())
             val readBytes = runCatching {
-                activeRecord.read(deviceAudioBuffer, deviceAudioBuffer.capacity(), AudioRecord.READ_BLOCKING)
+                activeRecord.read(
+                    deviceAudioBuffer,
+                    deviceAudioBuffer.capacity(),
+                    AudioRecord.READ_BLOCKING
+                )
             }.onFailure { cause ->
                 recoverOrDisableDeviceAudio(activeRecord, "AudioRecord.read failed.", cause)
             }.getOrNull() ?: return
@@ -190,7 +221,10 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
             val audioSource = peerConnectionFactory.createAudioSource(audioMediaConstraints)
 
             val screenCapturer = ScreenCapturerAndroid(
-                SurfaceTextureHelper.create("ScreenStreamSurfaceTexture", rootEglBase.eglBaseContext),
+                SurfaceTextureHelper.create(
+                    "ScreenStreamSurfaceTexture",
+                    rootEglBase.eglBaseContext
+                ),
                 object : MediaProjection.Callback() {
                     override fun onStop() {
                         XLog.i(this@WebRtcProjection.getLog("MediaProjection.Callback", "onStop"))
@@ -198,11 +232,21 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
                     }
 
                     override fun onCapturedContentVisibilityChanged(isVisible: Boolean) {
-                        XLog.v(this@WebRtcProjection.getLog("MediaProjection.Callback", "onCapturedContentVisibilityChanged: $isVisible"))
+                        XLog.v(
+                            this@WebRtcProjection.getLog(
+                                "MediaProjection.Callback",
+                                "onCapturedContentVisibilityChanged: $isVisible"
+                            )
+                        )
                     }
 
                     override fun onCapturedContentResize(width: Int, height: Int) {
-                        XLog.v(this@WebRtcProjection.getLog("MediaProjection.Callback", "onCapturedContentResize: width:$width, height:$height"))
+                        XLog.v(
+                            this@WebRtcProjection.getLog(
+                                "MediaProjection.Callback",
+                                "onCapturedContentResize: width:$width, height:$height"
+                            )
+                        )
                         changeCaptureFormat(width, height)
                     }
                 },
@@ -212,9 +256,14 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
                 }
             )
 
-            val screeSize = WindowMetricsCalculator.getOrCreate().computeMaximumWindowMetrics(serviceContext).bounds
+            val screeSize = WindowMetricsCalculator.getOrCreate()
+                .computeMaximumWindowMetrics(serviceContext).bounds
             val captureStarted = screenCapturer.startCapture(
-                mediaProjection, screeSize.width(), screeSize.height(), videoSource.capturerObserver, isStartupStillValid
+                mediaProjection,
+                screeSize.width(),
+                screeSize.height(),
+                videoSource.capturerObserver,
+                isStartupStillValid
             )
             if (!captureStarted) {
                 XLog.i(getLog("start", "Capture start failed. Stopping projection."))
@@ -254,17 +303,30 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
     internal fun changeCaptureFormat(width: Int, height: Int) {
         synchronized(lock) {
             if (isStopped || isRunning.not()) {
-                XLog.i(this@WebRtcProjection.getLog("changeCaptureFormat", "Ignoring: isStopped=$isStopped, isRunning=$isRunning"))
+                XLog.i(
+                    this@WebRtcProjection.getLog(
+                        "changeCaptureFormat",
+                        "Ignoring: isStopped=$isStopped, isRunning=$isRunning"
+                    )
+                )
                 return
             }
             if (width <= 0 || height <= 0) {
                 XLog.e(
-                    this@WebRtcProjection.getLog("changeCaptureFormat", "Invalid size: $width x $height. Ignoring."),
+                    this@WebRtcProjection.getLog(
+                        "changeCaptureFormat",
+                        "Invalid size: $width x $height. Ignoring."
+                    ),
                     IllegalArgumentException("Invalid capture size: $width x $height")
                 )
                 return
             }
-            XLog.d(this@WebRtcProjection.getLog("changeCaptureFormat", "width:$width, height:$height"))
+            XLog.d(
+                this@WebRtcProjection.getLog(
+                    "changeCaptureFormat",
+                    "width:$width, height:$height"
+                )
+            )
             screenCapturer?.changeCaptureFormat(width, height)
         }
     }
@@ -272,12 +334,18 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
     internal fun forceKeyFrame() {
         synchronized(lock) {
             if (isStopped || isRunning.not()) {
-                XLog.i(this@WebRtcProjection.getLog("forceKeyFrame", "Ignoring: isStopped=$isStopped, isRunning=$isRunning"))
+                XLog.i(
+                    this@WebRtcProjection.getLog(
+                        "forceKeyFrame",
+                        "Ignoring: isStopped=$isStopped, isRunning=$isRunning"
+                    )
+                )
                 return
             }
             XLog.d(this@WebRtcProjection.getLog("forceKeyFrame"))
             screenCapturer?.apply {
-                val screeSize = WindowMetricsCalculator.getOrCreate().computeMaximumWindowMetrics(serviceContext).bounds
+                val screeSize = WindowMetricsCalculator.getOrCreate()
+                    .computeMaximumWindowMetrics(serviceContext).bounds
                 changeCaptureFormat(screeSize.width() - 1, screeSize.height() - 1)
                 changeCaptureFormat(screeSize.width(), screeSize.height())
             }
@@ -324,7 +392,11 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
 
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.Q)
-    private fun createAudioRecord(audioFormat: Int, sampleRate: Int, mediaProjection: MediaProjection): AudioRecord? {
+    private fun createAudioRecord(
+        audioFormat: Int,
+        sampleRate: Int,
+        mediaProjection: MediaProjection
+    ): AudioRecord? {
         val format = AudioFormat.Builder()
             .setEncoding(audioFormat)
             .setSampleRate(sampleRate)
@@ -342,7 +414,8 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
                 .setAudioFormat(format)
                 .setAudioPlaybackCaptureConfig(playbackConfig)
                 .build()
-        }.onFailure { e -> XLog.e(getLog("createAudioRecord", "Cannot create AudioRecord"), e) }.getOrNull() ?: return null
+        }.onFailure { e -> XLog.e(getLog("createAudioRecord", "Cannot create AudioRecord"), e) }
+            .getOrNull() ?: return null
 
         if (record.state != AudioRecord.STATE_INITIALIZED) {
             XLog.w(getLog("createAudioRecord", "AudioRecord not initialized."))
@@ -354,10 +427,18 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
     }
 
     private fun notifyDeviceAudioUnavailable() = mainHandler.post {
-        Toast.makeText(serviceContext, R.string.webrtc_stream_audio_capture_unavailable, Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            serviceContext,
+            R.string.webrtc_stream_audio_capture_unavailable,
+            Toast.LENGTH_LONG
+        ).show()
     }
 
-    private fun recoverOrDisableDeviceAudio(record: AudioRecord?, message: String, cause: Throwable? = null) {
+    private fun recoverOrDisableDeviceAudio(
+        record: AudioRecord?,
+        message: String,
+        cause: Throwable? = null
+    ) {
         val shouldRetry = synchronized(lock) {
             if (record != null) {
                 runCatching { record.release() }.onFailure {
@@ -374,11 +455,19 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
         }
         if (shouldRetry) {
             val details = cause?.message?.let { " Cause: $it" } ?: ""
-            XLog.w(getLog("onAudioDataRecorded", "$message Retrying AudioRecord recreation once.$details"))
+            XLog.w(
+                getLog(
+                    "onAudioDataRecorded",
+                    "$message Retrying AudioRecord recreation once.$details"
+                )
+            )
             return
         }
 
-        if (cause == null) XLog.w(getLog("onAudioDataRecorded", "$message Disabling device audio."), IllegalStateException(message))
+        if (cause == null) XLog.w(
+            getLog("onAudioDataRecorded", "$message Disabling device audio."),
+            IllegalStateException(message)
+        )
         else XLog.w(getLog("onAudioDataRecorded", "$message Disabling device audio."), cause)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             setDeviceAudioMute(true)
@@ -391,7 +480,8 @@ internal class WebRtcProjection(private val serviceContext: Context) : AudioReco
         val reusable = if (buffer != null && buffer.capacity() >= capacity) {
             buffer
         } else {
-            ByteBuffer.allocateDirect(capacity).order(ByteOrder.nativeOrder()).also { reusableDeviceAudioBuffer = it }
+            ByteBuffer.allocateDirect(capacity).order(ByteOrder.nativeOrder())
+                .also { reusableDeviceAudioBuffer = it }
         }
         reusable.clear()
         reusable.limit(capacity)

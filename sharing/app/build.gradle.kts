@@ -157,6 +157,10 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
 
+    implementation(libs.socket)
+    implementation(libs.okio)
+    implementation(libs.okhttp)
+
     // UI Libraries
     implementation(libs.material)
     implementation(libs.toasty)

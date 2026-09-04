@@ -18,7 +18,6 @@ import org.webrtc.PeerConnection.IceServer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
-
 internal class SocketSignaling(
     private val environment: WebRtcEnvironment,
     private val okHttpClient: OkHttpClient,

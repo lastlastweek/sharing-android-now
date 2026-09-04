@@ -263,7 +263,7 @@ public class HardwareVideoEncoderFactory implements VideoEncoderFactory {
 //        return new FramerateBitrateAdjuster();
 //      }
 //    }
-    // Other codecs don't need bitrate adjustment.
+//     Other codecs don't need bitrate adjustment.
     return new BaseBitrateAdjuster();
   }
 
