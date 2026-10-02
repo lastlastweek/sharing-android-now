@@ -1,4 +1,4 @@
-package com.lastweek.sharing.screens
+package com.lastweek.sharing.screen
 
 import kotlinx.serialization.Serializable
 
@@ -12,4 +12,7 @@ sealed class NavRoutes {
 
     @Serializable
     data object AliPayScreen : NavRoutes()
+
+    @Serializable
+    data object FloatingCenterLoginScreen : NavRoutes()
 }

@@ -1,8 +1,9 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -43,9 +44,7 @@ internal fun StreamTabContent(
                             .fillMaxWidth()
                     )
                 }
-                Column(modifier = Modifier.weight(1F)) {
-                    AdaptiveBanner(modifier = Modifier.fillMaxWidth())
-                }
+                Spacer(modifier = Modifier.weight(1F))
             }
         } else {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -55,7 +54,6 @@ internal fun StreamTabContent(
                         .padding(top = 8.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
                         .fillMaxWidth()
                 )
-                AdaptiveBanner(modifier = Modifier.fillMaxWidth())
             }
         }
         activeModule.value?.StreamUIContent(modifier = Modifier.fillMaxSize())

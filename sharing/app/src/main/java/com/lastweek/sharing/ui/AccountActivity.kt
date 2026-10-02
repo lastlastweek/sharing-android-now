@@ -8,10 +8,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.lastweek.sharing.screens.AccountScreen
-import com.lastweek.sharing.screens.AliPayScreen
-import com.lastweek.sharing.screens.LoginScreen
-import com.lastweek.sharing.screens.NavRoutes
+import com.lastweek.sharing.screen.AccountScreen
+import com.lastweek.sharing.screen.AliPayScreen
+import com.lastweek.sharing.screen.FloatingCenterLoginScreen
+import com.lastweek.sharing.screen.LoginScreen
+import com.lastweek.sharing.screen.NavRoutes
 
 class AccountActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +36,10 @@ class AccountActivity : ComponentActivity() {
 
                 composable<NavRoutes.AliPayScreen> {
                     AliPayScreen(navController)
+                }
+
+                composable<NavRoutes.FloatingCenterLoginScreen> {
+                    FloatingCenterLoginScreen(navController)
                 }
             }
         }

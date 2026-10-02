@@ -1,4 +1,4 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toRect
+import com.lastweek.sharing.common.AppLogger
 
 @Composable
 internal fun ScreenStreamContent(

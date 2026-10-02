@@ -160,6 +160,7 @@ dependencies {
     implementation(libs.socket)
     implementation(libs.okio)
     implementation(libs.okhttp)
+    implementation(libs.okhttp.urlconnection)
 
     // UI Libraries
     implementation(libs.material)
@@ -198,7 +199,12 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.legacy.support.v4)
     implementation(libs.androidx.fragment)
+    implementation(libs.androidx.material3)
     coreLibraryDesugaring(libs.android.tools.desugar)
+
+    // AndroidX Security (用于 MasterKey 和 EncryptedSharedPreferences)
+    implementation(libs.androidx.security.crypto)
+
 
     // Testing Libraries
     testImplementation(libs.junit)

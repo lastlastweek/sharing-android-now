@@ -11,17 +11,17 @@ import com.elvishew.xlog.LogConfiguration
 import com.elvishew.xlog.LogItem
 import com.elvishew.xlog.interceptor.AbstractFilterInterceptor
 import com.jakewharton.processphoenix.ProcessPhoenix
-import com.tencent.mmkv.MMKV
 import com.lastweek.sharing.AppConfig.ANG_PACKAGE
 import com.lastweek.sharing.common.CommonKoinModule
 import com.lastweek.sharing.common.analytics.StreamingAnalytics
 import com.lastweek.sharing.common.notification.NotificationHelper
 import com.lastweek.sharing.handler.SettingsManager
-import com.lastweek.sharing.temporary.AdMob
-import com.lastweek.sharing.temporary.AppLogger
-import com.lastweek.sharing.temporary.AppStreamingAnalytics
-import com.lastweek.sharing.temporary.NotificationHelperImpl
+import com.lastweek.sharing.common.AppLogger
+import com.lastweek.sharing.common.AppStreamingAnalytics
+import com.lastweek.sharing.common.NotificationHelperImpl
+import com.lastweek.sharing.util.OkHttpUtil
 import com.lastweek.sharing.webrtc.WebRtcKoinModule
+import com.tencent.mmkv.MMKV
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -63,6 +63,8 @@ class AngApplication : MultiDexApplication() {
         super.onCreate()
 
         MMKV.initialize(this)
+
+        OkHttpUtil.init(this)
 
         SettingsManager.setNightMode()
         // Initialize WorkManager with the custom configuration
@@ -107,7 +109,6 @@ class AngApplication : MultiDexApplication() {
         AppLogger.init(this, ::configureLogger)
 
         val defaultModule = module {
-            single(createdAtStart = true) { AdMob(get()) }
             single(createdAtStart = true) { AppStreamingAnalytics(get()) } bind (StreamingAnalytics::class)
             single { NotificationHelperImpl(get()) } bind (NotificationHelper::class)
         }

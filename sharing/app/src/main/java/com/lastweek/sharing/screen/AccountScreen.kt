@@ -1,4 +1,4 @@
-package com.lastweek.sharing.screens
+package com.lastweek.sharing.screen
 
 import android.content.Context
 import androidx.activity.compose.LocalActivity
@@ -19,15 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.AlternateEmail
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Money
-import androidx.compose.material.icons.filled.MoneyOff
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.PhoneIphone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,7 +34,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,6 +62,10 @@ val TelegramOnlineGreen = Color(0xFF4CAF50)
 fun AccountScreen(navController: NavHostController) {
     val scrollState = rememberScrollState()
     val activity = LocalActivity.current
+
+    var showLogin by remember {
+        mutableStateOf(false)
+    }
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -162,6 +164,10 @@ fun AccountScreen(navController: NavHostController) {
 
                 Spacer(modifier = Modifier.height(280.dp))
 
+//                ActionItem(title = "退出登录", color = Color.Black, onClick = {
+//                    showLogin = true
+//                })
+
                 ActionItem(title = "退出登录", color = Color.Black, onClick = {
                     coroutineScope.launch {
                         // 清数据
@@ -174,6 +180,17 @@ fun AccountScreen(navController: NavHostController) {
                     }
                 })
             }
+
+//            if (showLogin) {
+//                LoginDialog(
+//                    onDismiss = {
+//                        showLogin = false
+//                    },
+//                    onLogin = { phone, smsCode ->
+//
+//                    }
+//                )
+//            }
         }
     }
 }

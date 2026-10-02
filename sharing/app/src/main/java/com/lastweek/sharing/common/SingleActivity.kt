@@ -1,4 +1,4 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.common
 
 import android.app.ActivityManager
 import android.content.Context
@@ -10,9 +10,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.elvishew.xlog.XLog
-import com.lastweek.sharing.common.getLog
 import com.lastweek.sharing.common.module.StreamingModule
 import com.lastweek.sharing.common.module.StreamingModuleManager
+import com.lastweek.sharing.screen.ScreenStreamContent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

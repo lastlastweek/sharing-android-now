@@ -1,4 +1,4 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.common
 
 import androidx.compose.material3.Typography
 

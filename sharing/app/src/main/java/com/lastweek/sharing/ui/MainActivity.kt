@@ -6,7 +6,6 @@ import android.app.ActivityManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.net.VpnService
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -29,11 +28,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.lastweek.sharing.AppConfig
-import com.lastweek.sharing.AppConfig.VPN
 import com.lastweek.sharing.R
 import com.lastweek.sharing.common.module.StreamingModule
 import com.lastweek.sharing.common.module.StreamingModuleManager
-import com.lastweek.sharing.screens.AvatarScreen
+import com.lastweek.sharing.screen.AvatarScreen
 import com.lastweek.sharing.databinding.ActivityMainBinding
 import com.lastweek.sharing.databinding.NavHeaderBinding
 import com.lastweek.sharing.dto.EConfigType
@@ -44,8 +42,8 @@ import com.lastweek.sharing.handler.MigrateManager
 import com.lastweek.sharing.handler.MmkvManager
 import com.lastweek.sharing.helper.SimpleItemTouchHelperCallback
 import com.lastweek.sharing.service.V2RayServiceManager
-import com.lastweek.sharing.temporary.ScreenStreamContent
-import com.lastweek.sharing.temporary.ScreenStreamTheme
+import com.lastweek.sharing.screen.ScreenStreamContent
+import com.lastweek.sharing.common.ScreenStreamTheme
 import com.lastweek.sharing.util.Utils
 import com.lastweek.sharing.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers

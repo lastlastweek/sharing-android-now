@@ -5,12 +5,13 @@ import java.security.SecureRandom
 import java.util.Base64
 
 object PkceHelper {
+    private val secureRandom = SecureRandom()
+
     /**
      * 生成 Code Verifier
      * 使用 SecureRandom 生成 32 字节随机数，并转换为 URL-safe Base64 字符串
      */
     fun generateCodeVerifier(): String {
-        val secureRandom = SecureRandom()
         val code = ByteArray(32)
         secureRandom.nextBytes(code)
         // 使用 URL-safe Base64 编码，不带 padding
@@ -31,7 +32,3 @@ object PkceHelper {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(hash)
     }
 }
-
-// 使用示例
-// val verifier = PkceHelper.generateCodeVerifier()
-// val challenge = PkceHelper.generateCodeChallenge(verifier)

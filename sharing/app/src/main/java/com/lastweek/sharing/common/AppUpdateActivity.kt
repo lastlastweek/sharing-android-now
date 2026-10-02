@@ -1,4 +1,4 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.common
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

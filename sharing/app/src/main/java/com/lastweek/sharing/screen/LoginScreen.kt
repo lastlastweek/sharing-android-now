@@ -1,6 +1,7 @@
-package com.lastweek.sharing.screens
+package com.lastweek.sharing.screen
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,8 +41,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.lastweek.sharing.ui.MainActivity
+import com.lastweek.sharing.viewmodel.LoginViewModel
 import kotlinx.coroutines.delay
 
 // 纯粹黑白无色系
@@ -74,13 +77,13 @@ fun Modifier.flatSubtleShadow(borderRadius: Dp): Modifier = this.drawBehind {
 
 @Composable
 fun LoginScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: LoginViewModel = viewModel()
 ) {
     var phone by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
     var countdown by remember { mutableIntStateOf(0) }
     var isCounting by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -207,15 +210,27 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    // 登录成功后调用
-                    isLoading = true
-                    val intent = Intent(context, MainActivity::class.java).apply {
-                        // 3. 核心：清空登录页的任务栈，确保用户进入主页后按返回键不会再看到登录页
-                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    }
-                    context.startActivity(intent)
+                    viewModel.login(
+                        mobile = phone,
+                        smsCode = code,
+
+                        // 登录成功
+                        onSuccess = {
+                            val intent = Intent(context, MainActivity::class.java).apply {
+                                // 核心：清空登录页的任务栈，确保用户进入主页后按返回键不会再看到登录页
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            }
+                            context.startActivity(intent)
+                        },
+
+                        // 登录失败
+                        onError = { message ->
+                            // 这里显示错误信息
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 },
-                enabled = isButtonEnabled,
+                enabled = isButtonEnabled && !viewModel.isLoading,
                 shape = RoundedCornerShape(26.dp),
                 elevation = ButtonDefaults.buttonElevation(
                     defaultElevation = 0.dp,

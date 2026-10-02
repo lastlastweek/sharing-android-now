@@ -1,4 +1,4 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.common
 
 import android.Manifest
 import android.app.Notification
@@ -16,8 +16,6 @@ import androidx.core.graphics.drawable.toBitmap
 import com.elvishew.xlog.XLog
 import com.lastweek.sharing.common.notification.NotificationHelper
 import com.lastweek.sharing.R
-import com.lastweek.sharing.common.getLog
-import com.lastweek.sharing.common.isPermissionGranted
 import kotlin.also
 import kotlin.apply
 import kotlin.jvm.java

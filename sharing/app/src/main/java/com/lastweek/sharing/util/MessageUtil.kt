@@ -9,8 +9,6 @@ import com.lastweek.sharing.service.V2RayTestService
 import java.io.Serializable
 
 object MessageUtil {
-
-
     /**
      * Sends a message to the service.
      *

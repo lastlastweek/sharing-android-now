@@ -1,4 +1,4 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.common
 
 import android.content.Context
 import com.lastweek.sharing.common.analytics.StreamingAnalytics

@@ -1,4 +1,4 @@
-package com.lastweek.sharing.temporary
+package com.lastweek.sharing.common
 
 import android.annotation.SuppressLint
 import android.app.Application
@@ -23,7 +23,6 @@ import com.elvishew.xlog.printer.file.naming.FileNameGenerator
 import com.jakewharton.processphoenix.ProcessPhoenix
 import com.lastweek.sharing.BuildConfig
 import com.lastweek.sharing.R
-import com.lastweek.sharing.common.getVersionName
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

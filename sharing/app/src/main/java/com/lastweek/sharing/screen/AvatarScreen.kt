@@ -1,4 +1,4 @@
-package com.lastweek.sharing.screens
+package com.lastweek.sharing.screen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background

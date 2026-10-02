@@ -104,6 +104,8 @@ object AppConfig {
     const val DELAY_TEST_URL = "https://www.gstatic.com/generate_204"
     const val DELAY_TEST_URL2 = "https://www.google.com/generate_204"
 
+    const val GENERIC_SERVER_DEV = "http://192.168.1.154:8081"
+
     /** DNS server addresses. */
     const val DNS_PROXY = "1.1.1.1"
     const val DNS_DIRECT = "223.5.5.5"
